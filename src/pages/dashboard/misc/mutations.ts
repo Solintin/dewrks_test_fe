@@ -72,7 +72,12 @@ export const useCreateTask = () => {
       return response.data.data as any;
     },
     onSettled() {
-      queryClient.invalidateQueries({ queryKey: ["use_fetch_task","use_fetch_task_overview"] });
+      queryClient.invalidateQueries({
+        queryKey: ["use_fetch_task"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["use_fetch_task_overview"],
+      });
     },
   });
 };
@@ -92,7 +97,12 @@ export const useEditTask = () => {
       return response.data.data as any;
     },
     onSettled() {
-      queryClient.invalidateQueries({ queryKey: ["use_fetch_task", "use_fetch_task_overview"] });
+      queryClient.invalidateQueries({
+        queryKey: ["use_fetch_task"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["use_fetch_task_overview"],
+      });
     },
   });
 };
@@ -107,7 +117,12 @@ export const useDeleteTask = () => {
       return response.data.data as any;
     },
     onSettled() {
-      queryClient.invalidateQueries({ queryKey: ["use_fetch_task", "use_fetch_task_overview"] });
+      queryClient.invalidateQueries({
+        queryKey: ["use_fetch_task"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["use_fetch_task_overview"],
+      });
     },
   });
 };

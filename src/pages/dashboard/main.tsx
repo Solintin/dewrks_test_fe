@@ -32,11 +32,11 @@ export default function DashboardPage(): JSX.Element {
 
                     </div>
                     <div className="grid grid-cols-3 gap-4 my-2">
-                        {(overview ?? []).map((status) => (
-                            <Card key={status._id} className="pt-2">
+                        {["pending", "in-progress", "completed"].map((status) => (
+                            <Card key={status} className="pt-2">
                                 <CardContent>
-                                    <h2 className="text-lg font-bold">{status._id.toUpperCase()}</h2>
-                                    <p>{status?.count ?? 0} </p>
+                                    <h2 className="text-lg font-bold">{status.toUpperCase()}</h2>
+                                    <p>{(overview ?? []).find((task) => task._id === status)?.count} </p>
                                 </CardContent>
                             </Card>
                         ))}
