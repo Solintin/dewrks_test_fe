@@ -36,7 +36,7 @@ export default function DashboardPage(): JSX.Element {
                             <Card key={status} className="pt-2">
                                 <CardContent>
                                     <h2 className="text-lg font-bold">{status.toUpperCase()}</h2>
-                                    <p>{(overview ?? []).find((task) => task._id === status)?.count} </p>
+                                    <p>{(overview ?? []).find((task) => task._id === status)?.count ?? 0} </p>
                                 </CardContent>
                             </Card>
                         ))}
