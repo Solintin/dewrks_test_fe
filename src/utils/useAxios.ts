@@ -5,7 +5,8 @@ import { getFromSessionStorage } from "./helper";
 
 const request = () => {
   const defaultOptions = {
-    baseURL: "http://localhost:4000/api/v1",
+    // baseURL: "http://localhost:4000/api/v1",
+    baseURL: "https://dewrkstest-production.up.railway.app/api/v1",
   };
   // Create instance
   let instance = axios.create(defaultOptions);
