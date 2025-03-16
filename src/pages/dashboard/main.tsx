@@ -8,13 +8,16 @@ import { Button } from "@/components/ui/button";
 import SuccessfulModal from "@/components/composables/SuccessfulModal";
 import Sidebar from "./misc/sidebar";
 import { useAdminDetail } from "@/hooks/useAdminDetail";
+import { useGetTasksOverview } from "./misc/mutations";
 
 export default function DashboardPage(): JSX.Element {
     const { state: isOpenAdd, setTrue: onOpenAdd, setFalse: onCloseAdd } = useControl()
     const { state: isSuccessModalOpen, setTrue: openSuccessModal, setFalse: closeSuccessModal } = useControl()
 
     const { adminLogin } = useAdminDetail()
+    const { data: overview } = useGetTasksOverview()
 
+    console.log(overview);
 
 
     return (
@@ -22,30 +25,25 @@ export default function DashboardPage(): JSX.Element {
             <Sidebar />
             <div className="flex flex-col flex-grow">
                 <Topbar />
-                <div className="p-6">
+                <div className="p-6 h-[calc(100vh-100px)] overflow-y-auto">
                     <div className="flex justify-between items-center">
-                        <h1 className="text-2xl">Welcome, {adminLogin?.name}</h1>
+                        <h1 className="text-2xl">Welcome, {adminLogin?.name ?? ""}</h1>
                         <Button onClick={() => onOpenAdd()}>Add Task</Button>
 
                     </div>
-                    <div className="grid grid-cols-3 gap-4 my-4">
-                        {/* {["pending", "in-progress", "completed"].map((status) => (
-                            <Card key={status}>
+                    <div className="grid grid-cols-3 gap-4 my-2">
+                        {(overview ?? []).map((status) => (
+                            <Card key={status._id} className="pt-2">
                                 <CardContent>
-                                    <h2 className="text-lg font-bold">{status.toUpperCase()}</h2>
-                                    <p>{(taskList ?? []).filter((task) => task.status === status).length} tasks</p>
+                                    <h2 className="text-lg font-bold">{status._id.toUpperCase()}</h2>
+                                    <p>{status?.count ?? 0} </p>
                                 </CardContent>
                             </Card>
                         ))}
-                    </div> */}
-
-
-
                     </div>
                     <TaskListTable />
                     {isOpenAdd && <AddTaskModal onClose={onCloseAdd} openSuccessModal={openSuccessModal} />}
                     {isSuccessModalOpen && <SuccessfulModal action={closeSuccessModal} body="Task added successfully" title="Task added" />}
-
                 </div>
             </div>
         </div>

@@ -8,21 +8,42 @@ import ConfirmModal from "@/components/composables/ConfirmModal";
 import Options from "@/components/ui/options";
 import useControl from "@/hooks/useControl";
 import { errorLogger } from "@/utils/helper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SuccessfulModal from "@/components/composables/SuccessfulModal";
 import { ITask } from "./mutations";
 import moment from "moment"
 import EditTaskModal from "./editTaskModal";
+import ViewTaskModal from "./viewTaskModal";
+import { useQueryParam } from "@/hooks/useQueryParam";
+import Pagination from "./pagination";
 
 
 const TaskListTable = () => {
     const { state: isOpen, setTrue: onOpen, setFalse: onClose } = useControl()
     const { state: isOpenEdit, setTrue: onOpenEdit, setFalse: onCloseEdit } = useControl()
-    // const { state: isOpenView, setTrue: onOpenView, setFalse: onCloseView } = useControl()
+    const { state: isOpenView, setTrue: onOpenView, setFalse: onCloseView } = useControl()
     const { state: isSuccessModalOpen, setTrue: openSuccessModal, setFalse: closeSuccessModal } = useControl()
+    const { state: isSuccessModalOpenEdit, setTrue: openSuccessModalEdit, setFalse: closeSuccessModalEdit } = useControl()
+    const [currentPage, setCurrentPage] = useState(1);
+    const [filter, setFilter] = useState("")
+    const statusFilter = useQueryParam("filter") as string
     const { mutateAsync, isPending: isRemoving } = useDeleteTask()
+    const { data, isPending } = useGetAllTasks({ status: filter, page: currentPage })
+
     const [TaskId, setTaskId] = useState("")
     const [task, setTask] = useState<ITask>()
+    const pageSize = 10; // Number of tasks per page
+    const totalPages = Math.ceil((data?.pagination?.totalRecords ?? 0) / pageSize);
+
+    const handlePageChange = (page: number) => {
+        if (page > 0 && page <= totalPages) {
+            setCurrentPage(page);
+            // refetch(); // Re-fetch tasks when page changes
+        }
+    };
+    useEffect(() => {
+        setFilter(statusFilter)
+    }, [statusFilter])
     async function onRemoveTask() {
         try {
             await mutateAsync(TaskId, {
@@ -90,21 +111,28 @@ const TaskListTable = () => {
             id: "actions",
             cell: ({ row }) => {
 
-                return <Options setTaskId={setTaskId} setTask={() => { setTask(row.original) }} id={row.original._id} onOpenEdit={onOpenEdit} openRemoveTask={onOpen} />
+                return <Options setTaskId={setTaskId} setTask={() => { setTask(row.original) }} id={row.original._id} onOpenEdit={onOpenEdit} onOpenView={onOpenView} openRemoveTask={onOpen} />
             },
         },
     ];
 
-    const { data, isPending } = useGetAllTasks()
 
 
     return (
         <div>
             <DataTable isLoading={isPending} columns={columns} data={(data?.data ?? []) as ITask[]} />
+            <div className="flex justify-end">
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
+            </div>
             {isOpen && <ConfirmModal onCancel={onClose} isLoading={isRemoving} onProceed={onRemoveTask} />}
-            {isSuccessModalOpen && <SuccessfulModal action={closeSuccessModal} body="Task removed successfully" title="Task removed" />}
-            {isOpenEdit && <EditTaskModal onClose={onCloseEdit} data={{ title: task?.title as string, description: task?.description as string, status: task?.status as string }} id={TaskId} openSuccessModal={openSuccessModal} />}
-            {/* {isOpenView && <AddTaskModal onClose={onCloseView} />} */}
+            {isSuccessModalOpen && <SuccessfulModal action={closeSuccessModal} body="Task removed successfully" title="Task Removed" />}
+            {isSuccessModalOpenEdit && <SuccessfulModal action={closeSuccessModalEdit} body="Task updated successfully" title="Task Updated" />}
+            {isOpenEdit && <EditTaskModal onClose={onCloseEdit} data={{ title: task?.title as string, description: task?.description as string, status: task?.status as string }} id={TaskId} openSuccessModal={openSuccessModalEdit} />}
+            {isOpenView && <ViewTaskModal onClose={onCloseView} task={task as ITask} />}
 
         </div>
     );

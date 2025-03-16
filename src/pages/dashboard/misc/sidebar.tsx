@@ -11,7 +11,7 @@ export default function Sidebar() {
     const { removeToken } = useToken()
     const navigate = useNavigate()
     return (
-        <div className="w-64 h-screen bg-primary-100 text-white p-4 flex flex-col justify-between">
+        <div className="w-64 h-screen rounded-l-lg bg-primary-100 text-white p-4 flex flex-col justify-between">
             <div>
                 <h2 className="text-xl font-bold">Task Manager</h2>
                 <nav className="mt-4 space-y-2">
@@ -26,7 +26,7 @@ export default function Sidebar() {
                     onClick={() => {
                         removeToken();
                         removeAdminLogin();
-                        navigate("/login/");
+                        navigate("/");
                     }}
                     className="justify-start border-none bg-transparent px-4 text-red-500 shadow-none hover:bg-transparent"
                 >

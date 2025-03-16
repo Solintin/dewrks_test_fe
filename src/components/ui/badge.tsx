@@ -4,7 +4,7 @@ export const Badge = ({ status }: { status: Status }) => {
   const colorMap = {
     "pending": "bg-primary-50 text-primary-100",
     "in-progress": "bg-yellow-100 text-yellow-500",
-    "completed": "bg-green-50 text-green-100",
+    "completed": "bg-green-100 text-green-500",
   };
 
   return (

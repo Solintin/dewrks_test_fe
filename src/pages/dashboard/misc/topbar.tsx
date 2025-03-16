@@ -1,8 +1,10 @@
 import { Avatar } from "@/components/ui/avatar";
+import { useAdminDetail } from "@/hooks/useAdminDetail";
 
 
 export default function Topbar() {
-    const userEmail = "user@example.com";
+    const { adminLogin } = useAdminDetail()
+    const userEmail = adminLogin?.email ?? "";
 
     return (
         <div className="flex justify-between items-center bg-gray-100 p-4 shadow">

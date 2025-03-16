@@ -2,6 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "@/utils/useAxios";
 import { editTaskDTO } from "./editTaskModal";
 
+export interface TaskOverview {
+  _id: string;
+  count: number;
+}
 export interface Task {
   data: ITask[];
   pagination: Pagination;
@@ -34,13 +38,13 @@ export interface Pagination {
   hasPrevPage: boolean;
 }
 
-export const useGetAllTasks = (email?: { email?: string }) => {
+export const useGetAllTasks = (filter?: { status: string; page: number }) => {
   return useQuery({
-    queryKey: ["use_fetch_task", email],
+    queryKey: ["use_fetch_task", { ...filter }],
     queryFn: async () => {
       const response = await axios.get("/task", {
         params: {
-          email,
+          ...filter,
         },
       });
       return response.data.data as Task;
@@ -48,14 +52,27 @@ export const useGetAllTasks = (email?: { email?: string }) => {
     placeholderData: (previousData) => previousData,
   });
 };
+export const useGetTasksOverview = () => {
+  return useQuery({
+    queryKey: ["use_fetch_task_overview"],
+    queryFn: async () => {
+      const response = await axios.get("/task/overview");
+      return response.data.data as TaskOverview[];
+    },
+    placeholderData: (previousData) => previousData,
+  });
+};
 
 export const useCreateTask = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["create-task"],
     mutationFn: async (payload: any) => {
       const response = await axios.post("/task", payload);
-
       return response.data.data as any;
+    },
+    onSettled() {
+      queryClient.invalidateQueries({ queryKey: ["use_fetch_task"] });
     },
   });
 };
