@@ -22,7 +22,7 @@ export function getFromSessionStorage(key: string): string | null {
 export function errorLogger(error: any) {
   if (error.response?.status === 401) {
     toast.error("Token  expired, login required");
-    window.open("/auth/signin");
+    window.open("/");
     return;
   }
   if (
